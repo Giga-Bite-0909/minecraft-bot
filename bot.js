@@ -25,7 +25,7 @@ const messages = [
 setInterval(()=>{
 const msg = messages[Math.floor(Math.random()*messages.length)]
 bot.chat(msg)
-},60000)
+},180000)
 
 
 // random movement
