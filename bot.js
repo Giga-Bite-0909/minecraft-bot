@@ -5,7 +5,7 @@ function createBot(){
 const bot = mineflayer.createBot({
   host: 'FaaTheDawg.aternos.me',
   port: 37919,
-  username: 'Technoblade',
+  username: 'GigaNiga',
   version: '1.12.1'
 })
 
