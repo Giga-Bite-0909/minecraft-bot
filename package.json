@@ -1,12 +1,18 @@
 {
   "name": "minecraft-bot",
   "version": "1.0.0",
-  "description": "Minecraft AFK bot",
+  "description": "Minecraft AFK / mining bot using Mineflayer",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
   },
+  "author": "",
+  "license": "MIT",
   "dependencies": {
-    "mineflayer": "^4.0.0"
+    "mineflayer": "^4.15.0",
+    "mineflayer-pathfinder": "^2.4.0",
+    "mineflayer-collectblock": "^1.3.0",
+    "minecraft-data": "^3.80.0",
+    "vec3": "^0.1.7"
   }
 }
