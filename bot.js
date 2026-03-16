@@ -1,4 +1,5 @@
 const mineflayer = require('mineflayer')
+const { pathfinder, Movements, goals } = require('mineflayer-pathfinder')
 
 function createBot(){
 
@@ -6,72 +7,74 @@ const bot = mineflayer.createBot({
   host: 'FaaTheDawg.aternos.me',
   port: 37919,
   username: 'GigaNiga',
-  version: '1.21.11'
+  version: '1.12.1'
 })
+
+bot.loadPlugin(pathfinder)
 
 bot.on('spawn', () => {
 
 console.log("Bot joined")
 
-// random chat
-const messages = [
-"hello",
-"anyone here?",
-"nice server",
-"just chilling",
-"what's up"
-]
+const mcData = require('minecraft-data')(bot.version)
+const defaultMove = new Movements(bot, mcData)
 
-setInterval(()=>{
-const msg = messages[Math.floor(Math.random()*messages.length)]
-bot.chat(msg)
-},180000)
+bot.pathfinder.setMovements(defaultMove)
 
-
-// random movement
-setInterval(()=>{
-
-const actions = ['forward','back','left','right']
-const action = actions[Math.floor(Math.random()*actions.length)]
-
-bot.setControlState(action,true)
-
-setTimeout(()=>{
-bot.setControlState(action,false)
-},2000)
-
-},15000)
-
-
-// random jumping
-setInterval(()=>{
-bot.setControlState('jump',true)
-
-setTimeout(()=>{
-bot.setControlState('jump',false)
-},500)
-
-},20000)
-
-
-// random looking
-setInterval(()=>{
-const yaw = Math.random() * Math.PI * 2
-const pitch = (Math.random() - 0.5) * Math.PI
-bot.look(yaw,pitch)
-},10000)
+startRandomChat()
+startMining()
 
 })
 
-
-bot.on('end',()=>{
+bot.on('end', ()=>{
 console.log("Reconnecting...")
 setTimeout(createBot,5000)
 })
 
-bot.on('error',(err)=>{
-console.log(err)
+bot.on('error', console.log)
+
+function startRandomChat(){
+
+const messages = [
+"hello everyone",
+"mining time",
+"any diamonds today?",
+"this server is cool",
+"just chilling"
+]
+
+function sendMessage(){
+
+const msg = messages[Math.floor(Math.random()*messages.length)]
+bot.chat(msg)
+
+// random delay 1–3 minutes
+const delay = 60000 + Math.random()*120000
+
+setTimeout(sendMessage, delay)
+
+}
+
+sendMessage()
+
+}
+
+function startMining(){
+
+setInterval(()=>{
+
+const block = bot.findBlock({
+matching: block => block.name.includes('stone'),
+maxDistance: 6
 })
+
+if(!block) return
+
+bot.dig(block)
+
+},10000)
+
+}
 
 }
 
