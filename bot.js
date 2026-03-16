@@ -1,80 +1,92 @@
 const mineflayer = require('mineflayer')
-const { pathfinder, Movements, goals } = require('mineflayer-pathfinder')
 
 function createBot(){
 
 const bot = mineflayer.createBot({
   host: 'FaaTheDawg.aternos.me',
   port: 37919,
-  username: 'GigaNiga',
+  username: 'Technoblade',
   version: '1.12.1'
 })
-
-bot.loadPlugin(pathfinder)
 
 bot.on('spawn', () => {
 
 console.log("Bot joined")
 
-const mcData = require('minecraft-data')(bot.version)
-const defaultMove = new Movements(bot, mcData)
+// random chat messages
+const messages = [
+"hello",
+"anyone mining?",
+"nice server",
+"what are you guys doing?",
+"just chilling"
+]
 
-bot.pathfinder.setMovements(defaultMove)
+// random chat timing (1–4 minutes)
+function randomChat(){
+  const msg = messages[Math.floor(Math.random()*messages.length)]
+  bot.chat(msg)
 
-startRandomChat()
-startMining()
+  const delay = 60000 + Math.random()*180000
+  setTimeout(randomChat, delay)
+}
+
+randomChat()
+
+// random walking
+function randomWalk(){
+
+const actions = ['forward','back','left','right']
+const action = actions[Math.floor(Math.random()*actions.length)]
+
+bot.setControlState(action,true)
+
+setTimeout(()=>{
+bot.setControlState(action,false)
+},1000 + Math.random()*2000)
+
+setTimeout(randomWalk,10000 + Math.random()*20000)
+
+}
+
+randomWalk()
+
+// random jumping
+setInterval(()=>{
+bot.setControlState('jump',true)
+
+setTimeout(()=>{
+bot.setControlState('jump',false)
+},400)
+
+},20000 + Math.random()*30000)
+
+
+// random looking around
+function randomLook(){
+
+const yaw = Math.random()*Math.PI*2
+const pitch = (Math.random()-0.5)*Math.PI
+
+bot.look(yaw,pitch,true)
+
+setTimeout(randomLook,8000 + Math.random()*15000)
+
+}
+
+randomLook()
 
 })
 
-bot.on('end', ()=>{
+// reconnect automatically
+bot.on('end',()=>{
 console.log("Reconnecting...")
 setTimeout(createBot,5000)
 })
 
-bot.on('error', console.log)
-
-function startRandomChat(){
-
-const messages = [
-"hello everyone",
-"mining time",
-"any diamonds today?",
-"this server is cool",
-"just chilling"
-]
-
-function sendMessage(){
-
-const msg = messages[Math.floor(Math.random()*messages.length)]
-bot.chat(msg)
-
-// random delay 1–3 minutes
-const delay = 60000 + Math.random()*120000
-
-setTimeout(sendMessage, delay)
-
-}
-
-sendMessage()
-
-}
-
-function startMining(){
-
-setInterval(()=>{
-
-const block = bot.findBlock({
-matching: block => block.name.includes('stone'),
-maxDistance: 6
+bot.on('error',(err)=>{
+console.log(err)
 })
-
-if(!block) return
-
-bot.dig(block)
-
-},10000)
-
-}
 
 }
 
