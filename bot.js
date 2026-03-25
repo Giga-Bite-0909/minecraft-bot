@@ -22,16 +22,23 @@ const messages = [
 "just chilling"
 ]
 
-// random chat timing (1–4 minutes)
+// chat every 3 minutes ONLY if players are present
 function randomChat(){
-  const msg = messages[Math.floor(Math.random()*messages.length)]
-  bot.chat(msg)
 
-  const delay = 60000 + Math.random()*180000
-  setTimeout(randomChat, delay)
+const players = Object.keys(bot.players).filter(p => p !== bot.username)
+
+if(players.length > 0){
+
+const msg = messages[Math.floor(Math.random()*messages.length)]
+bot.chat(msg)
+
+}
+
+setTimeout(randomChat,180000) // 3 minutes
 }
 
 randomChat()
+
 
 // random walking
 function randomWalk(){
@@ -50,6 +57,7 @@ setTimeout(randomWalk,10000 + Math.random()*20000)
 }
 
 randomWalk()
+
 
 // random jumping
 setInterval(()=>{
@@ -77,6 +85,7 @@ setTimeout(randomLook,8000 + Math.random()*15000)
 randomLook()
 
 })
+
 
 // reconnect automatically
 bot.on('end',()=>{
